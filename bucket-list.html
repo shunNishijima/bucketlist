@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Bucket List - 人生でやりたいこと</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf9f7;
+            --card: #ffffff;
+            --border: #e8e6e3;
+            --text: #2d2a26;
+            --text-secondary: #6b6560;
+            --text-muted: #a39e98;
+            --accent: #c9a86c;
+            --accent-light: #f5efe4;
+            --accent-dark: #b08d4f;
+            --success: #6b9b76;
+            --success-light: #e8f2ea;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1a1915;
+                --card: #252320;
+                --border: #3d3a36;
+                --text: #f5f3f0;
+                --text-secondary: #a39e98;
+                --text-muted: #6b6560;
+                --accent: #d4b577;
+                --accent-light: #3d3528;
+                --success: #7db088;
+                --success-light: #2d3a30;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 120px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 24px 0 32px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .progress-circle {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .progress-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-bg {
+            fill: none;
+            stroke: var(--border);
+            stroke-width: 10;
+        }
+
+        .progress-fill {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 377;
+            stroke-dashoffset: 377;
+            transition: stroke-dashoffset 0.8s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-count {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .progress-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .filter-tab {
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .filter-tab:hover {
+            border-color: var(--accent);
+        }
+
+        .filter-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .filter-tab .count {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-left: 4px;
+        }
+
+        /* Add Button */
+        .add-section {
+            margin-bottom: 24px;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 500;
+            font-family: inherit;
+            background: var(--accent);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            background: var(--accent-dark);
+        }
+
+        /* Bucket List */
+        .age-group {
+            margin-bottom: 32px;
+        }
+
+        .age-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .age-label {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .age-count {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--accent-light);
+            padding: 4px 10px;
+            border-radius: 10px;
+        }
+
+        .bucket-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Bucket Item */
+        .bucket-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .bucket-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .bucket-item.completed {
+            background: var(--success-light);
+            border-color: var(--success);
+        }
+
+        .bucket-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+            margin-top: 2px;
+        }
+
+        .bucket-checkbox:hover {
+            border-color: var(--success);
+            background: var(--success-light);
+        }
+
+        .bucket-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .bucket-checkbox svg {
+            width: 14px;
+            height: 14px;
+            stroke: white;
+            stroke-width: 3;
+            opacity: 0;
+        }
+
+        .bucket-checkbox.checked svg {
+            opacity: 1;
+        }
+
+        .bucket-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .bucket-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .bucket-item.completed .bucket-title {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .bucket-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .bucket-category {
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        .bucket-date {
+            font-size: 11px;
+        }
+
+        .bucket-actions {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .bucket-item:hover .bucket-actions {
+            opacity: 1;
+        }
+
+        .bucket-action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--bg);
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .bucket-action-btn:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .bucket-action-btn.delete:hover {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: var(--card);
+            border-radius: 20px 20px 0 0;
+            padding: 24px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal {
+            transform: translateY(0);
+        }
+
+        .modal-handle {
+            width: 40px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 15px;
+            font-family: inherit;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* Age Selector */
+        .age-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .age-option {
+            padding: 10px 16px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .age-option:hover {
+            border-color: var(--accent);
+        }
+
+        .age-option.selected {
+            background: var(--accent-light);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Category Selector */
+        .category-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .category-option {
+            padding: 8px 14px;
+            font-size: 12px;
+            font-family: inherit;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .category-option:hover {
+            border-color: var(--accent);
+        }
+
+        .category-option.selected {
+            background: var(--accent-light);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 500;
+            font-family: inherit;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.cancel {
+            background: var(--bg);
+            color: var(--text-secondary);
+        }
+
+        .modal-btn.confirm {
+            background: var(--accent);
+            color: white;
+        }
+
+        .modal-btn.danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* Inspirations */
+        .inspiration-section {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .inspiration-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .inspiration-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .inspiration-item {
+            padding: 10px 14px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .inspiration-item:hover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✨ Bucket List</h1>
+            <p class="subtitle">人生でやりたいこと</p>
+        </header>
+
+        <!-- Progress -->
+        <div class="progress-section">
+            <div class="progress-circle">
+                <svg width="140" height="140" viewBox="0 0 140 140">
+                    <circle class="progress-bg" cx="70" cy="70" r="60"/>
+                    <circle class="progress-fill" id="progressFill" cx="70" cy="70" r="60"/>
+                </svg>
+                <div class="progress-text">
+                    <div class="progress-count" id="completedCount">0</div>
+                    <div class="progress-label">達成</div>
+                </div>
+            </div>
+            <div class="progress-stats">
+                <div class="stat">
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-label">やりたいこと</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="remainingCount">0</div>
+                    <div class="stat-label">残り</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter -->
+        <div class="filter-tabs" id="filterTabs">
+            <button class="filter-tab active" data-filter="all">すべて</button>
+            <button class="filter-tab" data-filter="incomplete">未達成</button>
+            <button class="filter-tab" data-filter="completed">達成済み</button>
+        </div>
+
+        <!-- Add Button -->
+        <div class="add-section">
+            <button class="add-btn" onclick="showModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                やりたいことを追加
+            </button>
+        </div>
+
+        <!-- Bucket List -->
+        <div id="bucketList"></div>
+
+        <!-- Inspirations -->
+        <div class="inspiration-section">
+            <div class="inspiration-title">
+                💡 アイデアのヒント
+            </div>
+            <div class="inspiration-list" id="inspirationList"></div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <h2 class="modal-title" id="modalTitle">やりたいことを追加</h2>
+            
+            <div class="form-group">
+                <label class="form-label">やりたいこと</label>
+                <input type="text" class="form-input" id="titleInput" placeholder="例: オーロラを見る">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">詳細・メモ（任意）</label>
+                <textarea class="form-input form-textarea" id="noteInput" placeholder="具体的な計画や場所など"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">いつまでに？</label>
+                <div class="age-selector" id="ageSelector">
+                    <button class="age-option" data-age="20s">20代</button>
+                    <button class="age-option" data-age="30s">30代</button>
+                    <button class="age-option" data-age="40s">40代</button>
+                    <button class="age-option" data-age="50s">50代</button>
+                    <button class="age-option" data-age="60s">60代〜</button>
+                    <button class="age-option selected" data-age="someday">いつか</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">カテゴリ</label>
+                <div class="category-selector" id="categorySelector">
+                    <button class="category-option selected" data-cat="travel">🌍 旅行</button>
+                    <button class="category-option" data-cat="experience">🎯 体験</button>
+                    <button class="category-option" data-cat="skill">📚 スキル</button>
+                    <button class="category-option" data-cat="career">💼 仕事</button>
+                    <button class="category-option" data-cat="health">💪 健康</button>
+                    <button class="category-option" data-cat="relationship">❤️ 人間関係</button>
+                    <button class="category-option" data-cat="money">💰 お金</button>
+                    <button class="category-option" data-cat="other">✨ その他</button>
+                </div>
+            </div>
+
+            <div class="modal-actions" id="modalActions">
+                <button class="modal-btn cancel" onclick="hideModal()">キャンセル</button>
+                <button class="modal-btn confirm" onclick="saveBucket()">追加</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'bucket_list_data';
+        
+        const AGE_LABELS = {
+            '20s': '20代',
+            '30s': '30代',
+            '40s': '40代',
+            '50s': '50代',
+            '60s': '60代〜',
+            'someday': 'いつか'
+        };
+
+        const AGE_ORDER = ['20s', '30s', '40s', '50s', '60s', 'someday'];
+
+        const CATEGORY_LABELS = {
+            'travel': '🌍 旅行',
+            'experience': '🎯 体験',
+            'skill': '📚 スキル',
+            'career': '💼 仕事',
+            'health': '💪 健康',
+            'relationship': '❤️ 人間関係',
+            'money': '💰 お金',
+            'other': '✨ その他'
+        };
+
+        const INSPIRATIONS = [
+            "オーロラを見る",
+            "富士山に登る",
+            "スカイダイビング",
+            "本を出版する",
+            "世界一周",
+            "起業する",
+            "マラソン完走",
+            "楽器を習う",
+            "新しい言語を学ぶ",
+            "ボランティアに参加",
+            "親に旅行をプレゼント",
+            "貯金1000万円",
+            "映画に出る",
+            "自分の家を建てる",
+            "ウユニ塩湖に行く",
+            "犬を飼う",
+            "一人旅をする",
+            "プログラミングを覚える"
+        ];
+
+        let data = loadData();
+        let currentFilter = 'all';
+        let editingId = null;
+        let selectedAge = 'someday';
+        let selectedCategory = 'travel';
+
+        function loadData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) return JSON.parse(saved);
+            return { items: [] };
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Modal
+        function showModal(id = null) {
+            editingId = id;
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const actions = document.getElementById('modalActions');
+
+            if (id) {
+                const item = data.items.find(i => i.id === id);
+                if (item) {
+                    title.textContent = '編集';
+                    document.getElementById('titleInput').value = item.title;
+                    document.getElementById('noteInput').value = item.note || '';
+                    selectAge(item.age);
+                    selectCategory(item.category);
+                    actions.innerHTML = `
+                        <button class="modal-btn danger" onclick="deleteBucket()">削除</button>
+                        <button class="modal-btn cancel" onclick="hideModal()">キャンセル</button>
+                        <button class="modal-btn confirm" onclick="saveBucket()">保存</button>
+                    `;
+                }
+            } else {
+                title.textContent = 'やりたいことを追加';
+                document.getElementById('titleInput').value = '';
+                document.getElementById('noteInput').value = '';
+                selectAge('someday');
+                selectCategory('travel');
+                actions.innerHTML = `
+                    <button class="modal-btn cancel" onclick="hideModal()">キャンセル</button>
+                    <button class="modal-btn confirm" onclick="saveBucket()">追加</button>
+                `;
+            }
+
+            modal.classList.add('show');
+            document.getElementById('titleInput').focus();
+        }
+
+        function hideModal() {
+            document.getElementById('modal').classList.remove('show');
+            editingId = null;
+        }
+
+        function selectAge(age) {
+            selectedAge = age;
+            document.querySelectorAll('.age-option').forEach(opt => {
+                opt.classList.toggle('selected', opt.dataset.age === age);
+            });
+        }
+
+        function selectCategory(cat) {
+            selectedCategory = cat;
+            document.querySelectorAll('.category-option').forEach(opt => {
+                opt.classList.toggle('selected', opt.dataset.cat === cat);
+            });
+        }
+
+        function saveBucket() {
+            const title = document.getElementById('titleInput').value.trim();
+            if (!title) return;
+
+            const item = {
+                id: editingId || generateId(),
+                title: title,
+                note: document.getElementById('noteInput').value.trim(),
+                age: selectedAge,
+                category: selectedCategory,
+                completed: editingId ? (data.items.find(i => i.id === editingId)?.completed || false) : false,
+                completedAt: editingId ? (data.items.find(i => i.id === editingId)?.completedAt || null) : null,
+                createdAt: editingId ? (data.items.find(i => i.id === editingId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
+            };
+
+            if (editingId) {
+                const index = data.items.findIndex(i => i.id === editingId);
+                if (index !== -1) data.items[index] = item;
+            } else {
+                data.items.push(item);
+            }
+
+            saveData();
+            render();
+            hideModal();
+        }
+
+        function deleteBucket() {
+            if (!confirm('このアイテムを削除しますか？')) return;
+            data.items = data.items.filter(i => i.id !== editingId);
+            saveData();
+            render();
+            hideModal();
+        }
+
+        function toggleComplete(id) {
+            const item = data.items.find(i => i.id === id);
+            if (item) {
+                item.completed = !item.completed;
+                item.completedAt = item.completed ? new Date().toISOString() : null;
+                saveData();
+                render();
+            }
+        }
+
+        function addFromInspiration(title) {
+            document.getElementById('titleInput').value = title;
+            showModal();
+        }
+
+        // Filter
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.filter === filter);
+            });
+            render();
+        }
+
+        // Render
+        function render() {
+            renderProgress();
+            renderList();
+            renderInspirations();
+        }
+
+        function renderProgress() {
+            const total = data.items.length;
+            const completed = data.items.filter(i => i.completed).length;
+            const remaining = total - completed;
+            const percent = total > 0 ? (completed / total) * 100 : 0;
+
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('remainingCount').textContent = remaining;
+
+            const circumference = 2 * Math.PI * 60; // 377
+            const offset = circumference - (percent / 100) * circumference;
+            document.getElementById('progressFill').style.strokeDashoffset = offset;
+        }
+
+        function renderList() {
+            const container = document.getElementById('bucketList');
+            
+            let filteredItems = data.items;
+            if (currentFilter === 'completed') {
+                filteredItems = data.items.filter(i => i.completed);
+            } else if (currentFilter === 'incomplete') {
+                filteredItems = data.items.filter(i => !i.completed);
+            }
+
+            if (filteredItems.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🌟</div>
+                        <p class="empty-text">${currentFilter === 'completed' ? 'まだ達成したアイテムがありません' : currentFilter === 'incomplete' ? 'すべて達成しました！素晴らしい！' : 'やりたいことを追加して人生を豊かにしましょう'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by age
+            const grouped = {};
+            AGE_ORDER.forEach(age => {
+                grouped[age] = filteredItems.filter(i => i.age === age);
+            });
+
+            let html = '';
+            AGE_ORDER.forEach(age => {
+                const items = grouped[age];
+                if (items.length === 0) return;
+
+                const completed = items.filter(i => i.completed).length;
+
+                html += `
+                    <div class="age-group">
+                        <div class="age-header">
+                            <span class="age-label">${AGE_LABELS[age]}</span>
+                            <span class="age-count">${completed}/${items.length} 達成</span>
+                        </div>
+                        <div class="bucket-list">
+                            ${items.map(item => renderItem(item)).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderItem(item) {
+            const completedDate = item.completedAt 
+                ? new Date(item.completedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric' })
+                : '';
+
+            return `
+                <div class="bucket-item ${item.completed ? 'completed' : ''}" data-id="${item.id}">
+                    <div class="bucket-checkbox ${item.completed ? 'checked' : ''}" onclick="event.stopPropagation(); toggleComplete('${item.id}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <div class="bucket-content" onclick="showModal('${item.id}')">
+                        <div class="bucket-title">${escapeHtml(item.title)}</div>
+                        <div class="bucket-meta">
+                            <span class="bucket-category">${CATEGORY_LABELS[item.category]}</span>
+                            ${item.completed ? `<span class="bucket-date">✓ ${completedDate}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="bucket-actions">
+                        <button class="bucket-action-btn" onclick="event.stopPropagation(); showModal('${item.id}')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderInspirations() {
+            const existing = data.items.map(i => i.title.toLowerCase());
+            const available = INSPIRATIONS.filter(i => !existing.includes(i.toLowerCase()));
+            
+            const container = document.getElementById('inspirationList');
+            container.innerHTML = available.slice(0, 10).map(title => `
+                <button class="inspiration-item" onclick="addFromInspiration('${escapeHtml(title)}')">${title}</button>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Event Listeners
+        document.querySelectorAll('.age-option').forEach(opt => {
+            opt.addEventListener('click', () => selectAge(opt.dataset.age));
+        });
+
+        document.querySelectorAll('.category-option').forEach(opt => {
+            opt.addEventListener('click', () => selectCategory(opt.dataset.cat));
+        });
+
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => setFilter(tab.dataset.filter));
+        });
+
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                hideModal();
+            }
+        });
+
+        document.getElementById('titleInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') saveBucket();
+        });
+
+        // Init
+        render();
+    </script>
+</body>
+</html>
